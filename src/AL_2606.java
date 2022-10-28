@@ -55,7 +55,6 @@ public class AL_2606 {
             }
         }
 
-
         System.out.println(sum-2);
     }
 }
