@@ -47,8 +47,36 @@ public class AL_2468 {
                 }
             }
         }
+        return total;
+    }
+
+    public static int dfs(Operator o, int h, boolean[][] visited, int total) {
+        for(int i=0; i<map.length; i++) {
+            for(int j=0; j<map.length; j++) {
+                if(map[i][j] < h || visited[i][j])
+                    continue;
+
+                total = total + dfs2(new Operator(i,j),h,visited);
+
+            }
+        }
 
         return total;
+    }
+    public static int dfs2(Operator o, int h, boolean[][] visited) {
+        visited[o.x][o.y] = true;
+        for(int k=0; k<4; k++) {
+            int nextX = o.x + dx[k];
+            int nextY = o.y + dy[k];
+
+            if(nextX < 0 || nextX >= map.length || nextY < 0 || nextY >= map.length || map[nextX][nextY] <= h || visited[nextX][nextY])
+                continue;
+
+//                    visited[nextX][nextY] = true;
+
+            dfs2(new Operator(nextX, nextY), h, visited);
+        }
+        return 1;
     }
 
     public static void main(String[] args) throws IOException {
@@ -71,7 +99,8 @@ public class AL_2468 {
         }
 
         for(int i=1; i<maxh; i++) {
-            int h = bfs(map, i, visit);
+//            int h = bfs(map, i, visit);
+            int h = dfs(new Operator(0, 0), i, visit, 0);
 
             if(max < h)
                 max = h;
