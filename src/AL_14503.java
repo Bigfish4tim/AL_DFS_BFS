@@ -13,13 +13,19 @@ public class AL_14503 {
     static int count = 0;
 
     static void dfs(int x, int y, int d) {
-        visit[x][y] = true;
+
+        if(!visit[x][y]) {
+            visit[x][y] = true;
+            count++;
+        }
 
         boolean[] check = new boolean[4];
+        int dir = d;
 
         for(int i=0; i<4; i++) {
-            int nextX = x+dx[(d+i+1)%4];
-            int nextY = y+dy[(d+i+1)%4];
+            int nextD = (d+3)%4;
+            int nextX = x+dx[nextD];
+            int nextY = y+dy[nextD];
 
             if(nextX < 0 || nextX >= N || nextY < 0 || nextY >= M)
                 continue;
@@ -28,11 +34,17 @@ public class AL_14503 {
                 continue;
             }
 
-            visit[nextX][nextY] = true;
-            dfs(nextX, nextY, (d+i+1)%4);
+            dfs(nextX, nextY, nextD);
+            d = nextD;
         }
         if(check[0] && check[1] && check[2] && check[3]) {
-            dfs(x+dx[(d+2)%4], y+dy[(d+2)%4], d);
+            int nextD = (dir+2)%4;
+            int nextX = x+dx[nextD];
+            int nextY = y+dy[nextD];
+            if(!(nextX < 0 || nextX >= N || nextY < 0 || nextY >= M)) {
+                if(map[nextX][nextY] == 0)
+                    dfs(nextX, nextY, dir);
+            }
         }
 
     }
@@ -45,8 +57,15 @@ public class AL_14503 {
         M = Integer.parseInt(st.nextToken());
 
         visit = new boolean[N][M];
+        map = new int[N][M];
 
         start = new int[3];
+
+        st = new StringTokenizer(br.readLine());
+
+        for(int i=0; i<3; i++) {
+            start[i] = Integer.parseInt(st.nextToken());
+        }
 
         for(int i=0; i<N; i++) {
             st = new StringTokenizer(br.readLine());
@@ -54,5 +73,10 @@ public class AL_14503 {
                 map[i][j] = Integer.parseInt(st.nextToken());
             }
         }
+
+        dfs(start[0], start[1], start[2]);
+
+
+        System.out.println(count);
     }
 }
