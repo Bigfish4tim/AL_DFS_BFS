@@ -20,62 +20,31 @@ public class AL_2468 {
         }
     }
 
-    public static int bfs(int[][] pmap, int h, boolean[][] visited) {
+    public static int bfs(Operator o, int h) {
         Queue<Operator> q = new LinkedList<>();
 
-        int total = 0;
+        q.offer(o);
+        visit[o.x][o.y] = true;
 
-        for(int i=0; i<pmap.length; i++) {
-            for(int j=0; j< pmap.length; j++) {
-                if(pmap[i][j] > h && !visited[i][j]) {
-                    q.offer(new Operator(i, j));
-                    visited[i][j] = true;
-                    total++;
-                }
-                while (!q.isEmpty()) {
-                    Operator temp = q.poll();
-                    for(int k=0; k<4; k++) {
-                        int nextX = temp.x + dx[k];
-                        int nextY = temp.y + dy[k];
+        while (!q.isEmpty()) {
+            Operator temp = q.poll();
 
-                        if(nextX < 0 || nextX >= pmap.length || nextY < 0 || nextY >= pmap.length || pmap[nextX][nextY] <= h || visited[nextX][nextY]) {
-                            continue;
-                        }
-                        q.offer(new Operator(nextX, nextY));
-                        visited[nextX][nextY] = true;
-                    }
-                }
-            }
-        }
-        return total;
-    }
+            for(int i=0; i<4; i++) {
+                int nextX = temp.x + dx[i];
+                int nextY = temp.y + dy[i];
 
-    public static int dfs(Operator o, int h, boolean[][] visited, int total) {
-        for(int i=0; i<map.length; i++) {
-            for(int j=0; j<map.length; j++) {
-                if(map[i][j] < h || visited[i][j])
+                if(nextX < 0 || nextX >= map.length || nextY < 0 || nextY >= map.length)
+                    continue;
+                if(visit[nextX][nextY])
+                    continue;
+                if(map[nextX][nextY] <= h)
                     continue;
 
-                total = total + dfs2(new Operator(i,j),h,visited);
-
+                q.offer(new Operator(nextX, nextY));
+                visit[nextX][nextY] = true;
             }
         }
 
-        return total;
-    }
-    public static int dfs2(Operator o, int h, boolean[][] visited) {
-        visited[o.x][o.y] = true;
-        for(int k=0; k<4; k++) {
-            int nextX = o.x + dx[k];
-            int nextY = o.y + dy[k];
-
-            if(nextX < 0 || nextX >= map.length || nextY < 0 || nextY >= map.length || map[nextX][nextY] <= h || visited[nextX][nextY])
-                continue;
-
-//                    visited[nextX][nextY] = true;
-
-            dfs2(new Operator(nextX, nextY), h, visited);
-        }
         return 1;
     }
 
@@ -98,14 +67,21 @@ public class AL_2468 {
             }
         }
 
-        for(int i=1; i<maxh; i++) {
-//            int h = bfs(map, i, visit);
-            int h = dfs(new Operator(0, 0), i, visit, 0);
-
-            if(max < h)
-                max = h;
-
+        for(int k=0; k<maxh; k++) {
             visit = new boolean[n][n];
+            int count = 0;
+            for(int i=0; i<map.length; i++) {
+                for(int j=0; j<map.length; j++) {
+                    if(map[i][j] <= k)
+                        continue;
+                    if(visit[i][j])
+                        continue;
+
+                    count += bfs(new Operator(i,j), k);
+                }
+            }
+            if(max < count)
+                max = count;
         }
 
         System.out.println(max);

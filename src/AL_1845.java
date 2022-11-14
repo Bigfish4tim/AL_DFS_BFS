@@ -10,34 +10,6 @@ public class AL_1845 {
     static int[] target;
     static int total = Integer.MAX_VALUE;
     static Queue<int[]> querys = new LinkedList<>();
-    static boolean trig;
-
-
-    public static void mainFunc(int[] tempMap, int start, int count) {
-        for(int i=start; i<N; i++) {
-            int from = tempMap[i];
-            if(tempMap[i] == target[i])
-                continue;
-            if(Arrays.stream(target).anyMatch(x -> x == from)) {   /// from * to > 0인 경우
-                int toIndex = IntStream.range(0, target.length).filter(x -> from == target[x]).findFirst().orElse(-1);
-
-                for(int j=i+1; j<N; j++) {
-                    if(j==toIndex)
-                        continue;
-
-                    reverse(tempMap, Integer.min(j, toIndex), Integer.max(j, toIndex));
-                    reverse(tempMap, i, j);
-                }
-                ////
-            } else {  /// from * to < 0 인 경우
-                int toIndex = IntStream.range(0, target.length).filter(x -> -from == target[x]).findFirst().orElse(-1); /// to index 탐색
-
-                reverse(tempMap, i, toIndex);
-                querys.offer(new int[] {i, toIndex});
-            }
-                /////
-        }
-    }
 
     public static void dfs(int[] tempMap, int start, Queue<int[]> queue) {
         if(isc(tempMap, target)) {
@@ -52,17 +24,15 @@ public class AL_1845 {
         int from = tempMap[start];
         int to = target[start];
 
-        Queue<int[]> tempQ = new LinkedList<>(queue);
-
         if(from == target[start]) {
             dfs(tempMap, start+1, queue);
         } else if(Arrays.stream(tempMap).anyMatch(x -> x == to)) {
             int toIndex = IntStream.range(0, tempMap.length).filter(x -> to == tempMap[x]).findFirst().orElse(-1);
 
             for(int i=start+1; i<N; i++) {
-                if(i==toIndex)
+                if(start==toIndex)
                     continue;
-
+                Queue<int[]> tempQ = new LinkedList<>(queue);
                 int[] temp = tempMap.clone();
 
                 reverse(temp, Integer.min(i, toIndex), Integer.max(i, toIndex));
@@ -74,7 +44,8 @@ public class AL_1845 {
         } else { /// from * to < 0 인 경우
             int toIndex = IntStream.range(0, tempMap.length).filter(x -> -to == tempMap[x]).findFirst().orElse(-1); /// to index 탐색
 
-            querys.offer(new int[] {start, toIndex});
+            Queue<int[]> tempQ = new LinkedList<>(queue);
+//            querys.offer(new int[] {start, toIndex});
             tempQ.offer(new int[] {start+1, toIndex+1});
             int[] temp = tempMap.clone();
             temp = reverse(temp, start, toIndex).clone();
