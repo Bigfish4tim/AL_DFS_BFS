@@ -8,7 +8,7 @@ public class AL_1845 {
     static int N;
     static int[] map;
     static int[] target;
-    static int total = Integer.MAX_VALUE;
+    static int total = 501;
     static Queue<int[]> querys = new LinkedList<>();
 
     public static void dfs(int[] tempMap, int start, Queue<int[]> queue) {
@@ -39,7 +39,8 @@ public class AL_1845 {
                 tempQ.offer(new int[] {Integer.min(i, toIndex)+1, Integer.max(i, toIndex)+1});
                 reverse(temp, start, i);
                 tempQ.offer(new int[] {start+1, i+1});
-                dfs(temp, start+1, tempQ);
+                if(tempQ.size() < total)
+                    dfs(temp, start+1, tempQ);
             }
         } else { /// from * to < 0 인 경우
             int toIndex = IntStream.range(0, tempMap.length).filter(x -> -to == tempMap[x]).findFirst().orElse(-1); /// to index 탐색
@@ -49,7 +50,8 @@ public class AL_1845 {
             tempQ.offer(new int[] {start+1, toIndex+1});
             int[] temp = tempMap.clone();
             temp = reverse(temp, start, toIndex).clone();
-            dfs(temp, start+1, tempQ);
+            if(tempQ.size() < total)
+                dfs(temp, start+1, tempQ);
         }
     }
 
