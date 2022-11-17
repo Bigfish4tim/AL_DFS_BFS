@@ -6,67 +6,60 @@ import java.util.*;
 public class AL_17071 {
     static int n;
     static int k;
-    static int[][] visit = new int[500001][2];
     static boolean[][] visited = new boolean[500001][2];
 
-    public static class Operator {
-        int x;
-        int count;
-
-        public Operator(int x, int count) {
-            this.x = x;
-            this.count = count;
-        }
-    }
-
-    public static int arithmetic(int n) {
-        return n*(n+1)/2;
-    }
 
     public static void bfs(int start, int end) {
-        Queue<Operator> oq = new LinkedList<>();
+        Queue<Integer> q = new LinkedList<>();
 
-        visited[start][1] = true;
+        int count = 0;
+        visited[start][0] = true;
 
         if(start==end) {
             System.out.println(0);
             return;
         }
-        oq.offer(new Operator(start, 1));
+        q.offer(start);
 
-        while (!oq.isEmpty()) {
-            Operator tempq = oq.poll();
+        while (!q.isEmpty()) {
+            if(end > 500000) {
+                System.out.println(-1);
+                return;
+            }
 
-            int temp = tempq.x;
+            int odds = count % 2;
 
-            int odds = tempq.count % 2;
+            if(visited[end][odds]) {
+                System.out.println(count);
+                return;
+            }
 
-            for(int i=0; i<3; i++) {
-                int next;
+            int size = q.size();
 
-                if(i==0) {
-                    next = temp+1;
-                } else if(i==1) {
-                    next = temp-1;
-                } else {
-                    next = temp*2;
+            for(int i=0; i<size; i++) {
+                int temp = q.poll();
+                int nextodds = (count + 1) % 2;
+
+                int next = temp +1;
+                if(next < 500001 && !visited[next][nextodds]) {
+                    visited[next][nextodds] = true;
+                    q.offer(next);
                 }
 
-                if(end+arithmetic(tempq.count) > 500000) {
-                    System.out.println(-1);
-                    return;
+                next = temp - 1;
+                if(next > 0 && !visited[next][nextodds]) {
+                    visited[next][nextodds] = true;
+                    q.offer(next);
                 }
 
-                if(visited[end+arithmetic(tempq.count)][odds]) {
-                    System.out.println(tempq.count);
-                    return;
-                }
-
-                if(next >= 0 && next < visit.length && !visited[next][odds]) {
-                    visited[next][odds] = true;
-                    oq.offer(new Operator(next, tempq.count+1));
+                next = temp * 2;
+                if(next < 500001 && !visited[next][nextodds]) {
+                    visited[next][nextodds] = true;
+                    q.offer(next);
                 }
             }
+            count++;
+            end = end + count;
         }
         System.out.println(-1);
     }
@@ -78,8 +71,6 @@ public class AL_17071 {
 
         n = Integer.parseInt(st.nextToken());
         k = Integer.parseInt(st.nextToken());
-
-//        dfs(n, k, 0);
 
         bfs(n, k);
     }
