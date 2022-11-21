@@ -10,7 +10,6 @@ public class AL_3197 {
 
     static Queue<int[]> StartPoint = new LinkedList<>();
 
-    static boolean[][] Lastvisit;
     static boolean[][] visit;
 
     static boolean isFind;
@@ -23,35 +22,33 @@ public class AL_3197 {
     static int[] dx = new int[] { -1, 1, 0, 0 };
     static int[] dy = new int[] { 0, 0, -1, 1 };
 
-    public static void bfs(int x, int y) {
-        Queue<int[]> q = new LinkedList<>();
+    public static Queue<int[]> bfs(Queue<int[]> q) {
 
-        q.offer(new int[] {x, y});
-        visit[x][y] = true;
+        Queue<int[]> nextq = new LinkedList<>();
 
         while (!q.isEmpty()) {
             int[] temp = q.poll();
+            if (temp[0] == Lpoints[1][0] && temp[1] == Lpoints[1][1]) {
+                isFind = true;
+                break;
+            }
             for(int i=0; i<4; i++) {
                 int nextX = temp[0] + dx[i];
                 int nextY = temp[1] + dy[i];
 
-                if(nextX < 0 || nextX >= R || nextY < 0 || nextY >= C)
+                if(nextX < 0 || nextX >= R || nextY < 0 || nextY >= C || visit[nextX][nextY])
                     continue;
-                if(visit[nextX][nextY])
-                    continue;
+
+                visit[nextX][nextY] = true;
+
                 if(map[nextX][nextY] == 'X') {
-                    StartPoint.offer(new int[] {temp[0], temp[1]});
+                    nextq.offer(new int[] {nextX, nextY});
                     continue;
-                }
-                if (nextX == Lpoints[1][0] && nextY == Lpoints[1][1]) {
-                    isFind = true;
-                    break;
                 }
                 q.offer(new int[] {nextX, nextY});
-                visit[nextX][nextY] = true;
             }
-
         }
+        return nextq;
     }
 
     public static void findx() {
@@ -64,24 +61,14 @@ public class AL_3197 {
                 int nextX = temp[0] + dx[i];
                 int nextY = temp[1] + dy[i];
 
-                if(nextX < 0 || nextX >= R || nextY < 0 || nextY >= C) {
-                    if(i==3)
-                        xq.offer(temp);
+                if(nextX < 0 || nextX >= R || nextY < 0 || nextY >= C)
                     continue;
-                }
-                if(map[nextX][nextY] == 'X') {
-                    if(i==3)
-                        xq.offer(temp);
-                    continue;
-                }
-                xs.offer(temp);
-                break;
-            }
-        }
 
-        while (!xs.isEmpty()) {
-            int[] temp = xs.poll();
-            map[temp[0]][temp[1]] = '.';
+                if(map[nextX][nextY] == 'X') {
+                    map[nextX][nextY] = '.';
+                    xq.offer(new int[] {nextX, nextY});
+                }
+            }
         }
     }
 
@@ -94,7 +81,6 @@ public class AL_3197 {
         C = Integer.parseInt(st.nextToken());
 
         map = new char[R][C];
-        Lastvisit = new boolean[R][C];
         visit = new boolean[R][C];
 
         int Lcount = 0;
@@ -113,11 +99,11 @@ public class AL_3197 {
             }
         }
         StartPoint.offer(new int[] {Lpoints[0][0], Lpoints[0][1]});
+        visit = new boolean[R][C];
+        visit[Lpoints[0][0]][Lpoints[0][1]] = true;
 
-        while (!StartPoint.isEmpty()) {
-            visit = new boolean[R][C];
-            int[] starter = StartPoint.poll();
-            bfs(starter[0], starter[1]);
+        while (true) {
+            StartPoint = bfs(StartPoint);
             if(isFind)
                 break;
             findx();
