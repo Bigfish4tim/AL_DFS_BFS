@@ -93,7 +93,7 @@ public class AL_3197 {
                     Lpoints[Lcount][1] = j;
                     Lcount++;
                 }
-                if(map[i][j] == 'X') {
+                if(map[i][j] != 'X') {
                     xq.offer(new int[] {i, j});
                 }
             }
