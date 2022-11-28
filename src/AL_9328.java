@@ -58,13 +58,20 @@ public class AL_9328 {
                 } else if(Character.isLowerCase(map[nextX][nextY])) {
                     q.add(new int[] {nextX, nextY});
                     keys.add(map[nextX][nextY]);
-                    for(int j=0, size=doors.size(); j<size; j++) {
-                        if(doors.get(j).doorname == Character.toUpperCase(map[nextX][nextY])) {
-                            q.add(new int[] {doors.get(j).x, doors.get(j).y});
-                            visit[doors.get(j).x][doors.get(j).y] = true;
-                            doors.remove(j);
+
+                    int doorIndex = 0;
+
+                    do {
+                        if (doors.get(doorIndex).doorname == Character.toUpperCase(map[nextX][nextY])) {
+                            q.add(new int[]{doors.get(doorIndex).x, doors.get(doorIndex).y});
+                            map[doors.get(doorIndex).x][doors.get(doorIndex).y] = '.';
+                            visit[doors.get(doorIndex).x][doors.get(doorIndex).y] = true;
+                            doors.remove(doorIndex);
+                        } else {
+                            doorIndex++;
                         }
-                    }
+                    } while (doorIndex <= doors.size());
+
                     map[nextX][nextY] = '.';
                     visit[nextX][nextY] = true;
                 } else if(map[nextX][nextY] == '$') {
@@ -88,8 +95,6 @@ public class AL_9328 {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
 
-
-
         T = Integer.parseInt(br.readLine());
 
         char[] line;
@@ -104,6 +109,8 @@ public class AL_9328 {
             keys = new ArrayList<>();
             doors = new ArrayList<>();
 
+            Queue<int[]> startq = new LinkedList<>();
+
             count = 0;
 
             for(int j=0; j<h; j++) {
@@ -114,10 +121,30 @@ public class AL_9328 {
             for (char c : line) {
                 keys.add(Character.toUpperCase(c));
             }
+
+            for(int n=0; n<h; n++) {
+                if(map[n][1] == '.') {
+                    startq.add(new int[] {n, 1});
+                } else if(map[n][h] == '.') {
+                    startq.add(new int[] {n, h});
+                }
+            }
+            for(int n=0; n<w; n++) {
+                if(map[1][n] == '.') {
+                    startq.add(new int[] {1, n});
+                } else if(map[h][n] == '.') {
+                    startq.add(new int[] {h, n});
+                }
+            }
+            while (!startq.isEmpty()) {
+                int[] temp = startq.poll();
+                bfs(temp[0], temp[1]);
+            }
+
+            bw.write(count + "\n");
         }
 
-
-
-
+        bw.flush();
+        bw.close();
     }
 }
