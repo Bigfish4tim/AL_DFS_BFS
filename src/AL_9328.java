@@ -30,6 +30,16 @@ public class AL_9328 {
     public static void bfs(int x, int y) {
         Queue<int[]> q = new LinkedList<>();
 
+
+        if(Character.isUpperCase(map[x][y]) && !visit[x][y]) {
+            doors.add(new Door(x, y, map[x][y]));
+        } else if(Character.isLowerCase(map[x][y]) && !visit[x][y]) {
+            keys.add(Character.toUpperCase(map[x][y]));
+        } else if(map[x][y] == '$' && !visit[x][y]) {
+            count++;
+        }
+
+
         q.add(new int[] {x,y});
         visit[x][y] = true;
 
@@ -57,11 +67,13 @@ public class AL_9328 {
                     }
                 } else if(Character.isLowerCase(map[nextX][nextY])) {
                     q.add(new int[] {nextX, nextY});
-                    keys.add(map[nextX][nextY]);
+                    keys.add(Character.toUpperCase(map[nextX][nextY]));
 
                     int doorIndex = 0;
 
                     do {
+                        if(doors.size() == 0)
+                            break;
                         if (doors.get(doorIndex).doorname == Character.toUpperCase(map[nextX][nextY])) {
                             q.add(new int[]{doors.get(doorIndex).x, doors.get(doorIndex).y});
                             map[doors.get(doorIndex).x][doors.get(doorIndex).y] = '.';
@@ -70,7 +82,7 @@ public class AL_9328 {
                         } else {
                             doorIndex++;
                         }
-                    } while (doorIndex <= doors.size());
+                    } while (doorIndex < doors.size());
 
                     map[nextX][nextY] = '.';
                     visit[nextX][nextY] = true;
@@ -104,6 +116,7 @@ public class AL_9328 {
             h = Integer.parseInt(st.nextToken());
             w = Integer.parseInt(st.nextToken());
 
+            map = new char[h][w];
             visit = new boolean[h][w];
 
             keys = new ArrayList<>();
@@ -118,22 +131,27 @@ public class AL_9328 {
                 if (w >= 0) System.arraycopy(line, 0, map[j], 0, w);
             }
             line = br.readLine().toCharArray();
-            for (char c : line) {
-                keys.add(Character.toUpperCase(c));
+
+            if(line[0] != '0') {
+                for (char c : line) {
+                    keys.add(Character.toUpperCase(c));
+                }
             }
 
             for(int n=0; n<h; n++) {
-                if(map[n][1] == '.') {
-                    startq.add(new int[] {n, 1});
-                } else if(map[n][h] == '.') {
-                    startq.add(new int[] {n, h});
+                if(map[n][0] != '*') {
+                    startq.add(new int[] {n, 0});
+                }
+                if(map[n][w-1] != '*') {
+                    startq.add(new int[] {n, w-1});
                 }
             }
             for(int n=0; n<w; n++) {
-                if(map[1][n] == '.') {
-                    startq.add(new int[] {1, n});
-                } else if(map[h][n] == '.') {
-                    startq.add(new int[] {h, n});
+                if(map[0][n] != '*') {
+                    startq.add(new int[] {0, n});
+                }
+                if(map[h-1][n] != '*') {
+                    startq.add(new int[] {h-1, n});
                 }
             }
             while (!startq.isEmpty()) {
