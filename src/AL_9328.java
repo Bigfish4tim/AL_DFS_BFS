@@ -31,13 +31,13 @@ public class AL_9328 {
         Queue<int[]> q = new LinkedList<>();
 
 
-        if(Character.isUpperCase(map[x][y]) && !visit[x][y]) {
-            doors.add(new Door(x, y, map[x][y]));
-        } else if(Character.isLowerCase(map[x][y]) && !visit[x][y]) {
-            keys.add(Character.toUpperCase(map[x][y]));
-        } else if(map[x][y] == '$' && !visit[x][y]) {
-            count++;
-        }
+//        if(Character.isUpperCase(map[x][y]) && !visit[x][y]) {
+//            doors.add(new Door(x, y, map[x][y]));
+//        } else if(Character.isLowerCase(map[x][y]) && !visit[x][y]) {
+//            keys.add(Character.toUpperCase(map[x][y]));
+//        } else if(map[x][y] == '$' && !visit[x][y]) {
+//            count++;
+//        }
 
 
         q.add(new int[] {x,y});
@@ -100,7 +100,7 @@ public class AL_9328 {
     }
 
     public static boolean isRange(int x, int y) {
-        return x < 0 || y < 0 || x >= h || y >= w;
+        return x < 0 || y < 0 || x >= h+2 || y >= w+2;
     }
 
     public static void main(String[] args) throws IOException {
@@ -116,19 +116,28 @@ public class AL_9328 {
             h = Integer.parseInt(st.nextToken());
             w = Integer.parseInt(st.nextToken());
 
-            map = new char[h][w];
-            visit = new boolean[h][w];
+            map = new char[h+2][w+2];
+            visit = new boolean[h+2][w+2];
 
             keys = new ArrayList<>();
             doors = new ArrayList<>();
 
-            Queue<int[]> startq = new LinkedList<>();
+//            Queue<int[]> startq = new LinkedList<>();
 
             count = 0;
 
-            for(int j=0; j<h; j++) {
+            for(int j=0; j<h+2; j++) {
+                map[j][0] = '.';
+                map[j][w+1] = '.';
+            }
+            for(int j=0; j<w+2; j++) {
+                map[0][j] = '.';
+                map[h+1][j] = '.';
+            }
+
+            for(int j=1; j<h+1; j++) {
                 line = br.readLine().toCharArray();
-                if (w >= 0) System.arraycopy(line, 0, map[j], 0, w);
+                if (w >= 0) System.arraycopy(line, 0, map[j], 1, w);
             }
             line = br.readLine().toCharArray();
 
@@ -138,26 +147,27 @@ public class AL_9328 {
                 }
             }
 
-            for(int n=0; n<h; n++) {
-                if(map[n][0] != '*') {
-                    startq.add(new int[] {n, 0});
-                }
-                if(map[n][w-1] != '*') {
-                    startq.add(new int[] {n, w-1});
-                }
-            }
-            for(int n=0; n<w; n++) {
-                if(map[0][n] != '*') {
-                    startq.add(new int[] {0, n});
-                }
-                if(map[h-1][n] != '*') {
-                    startq.add(new int[] {h-1, n});
-                }
-            }
-            while (!startq.isEmpty()) {
-                int[] temp = startq.poll();
-                bfs(temp[0], temp[1]);
-            }
+//            for(int n=0; n<h; n++) {
+//                if(map[n][0] != '*') {
+//                    startq.add(new int[] {n, 0});
+//                }
+//                if(map[n][w-1] != '*') {
+//                    startq.add(new int[] {n, w-1});
+//                }
+//            }
+//            for(int n=0; n<w; n++) {
+//                if(map[0][n] != '*') {
+//                    startq.add(new int[] {0, n});
+//                }
+//                if(map[h-1][n] != '*') {
+//                    startq.add(new int[] {h-1, n});
+//                }
+//            }
+//            while (!startq.isEmpty()) {
+//                int[] temp = startq.poll();
+//                bfs(temp[0], temp[1]);
+//            }
+            bfs(0,0);
 
             bw.write(count + "\n");
         }
