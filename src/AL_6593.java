@@ -56,6 +56,8 @@ public class AL_6593 {
             R = Integer.parseInt(st.nextToken());
             C = Integer.parseInt(st.nextToken());
 
+            trig = false;
+
             if(L==0 && R==0 && C==0)
                 break;
 
@@ -63,7 +65,6 @@ public class AL_6593 {
             visit = new boolean[L][R][C];
 
             char[] line;
-            char[] empty = new char[] {};
 
             count = Integer.MAX_VALUE;
 
