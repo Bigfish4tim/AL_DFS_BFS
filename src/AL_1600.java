@@ -13,8 +13,6 @@ public class AL_1600 {
     static int[] hdx = new int[] { -2, -1, 2, 1, -2, -1, 2, 1 };
     static int[] hdy = new int[] { -1, -2, -1, -2, 1, 2, 1, 2 };
 
-    static boolean trig = false;
-
     public static class Node {
         int x;
         int y;
@@ -29,11 +27,7 @@ public class AL_1600 {
         }
     }
 
-    public static void bfs() {
-        if(H==1 && W==1) {
-            count=0;
-            return;
-        }
+    public static int bfs(int x, int y) {
         Queue<Node> q = new LinkedList<>();
 
         q.offer(new Node(0,0,K,0));
@@ -42,45 +36,31 @@ public class AL_1600 {
         while (!q.isEmpty()) {
             Node temp = q.poll();
             if(temp.x == H-1 && temp.y == W-1) {
-                if(count >= temp.counter) {
-                    count = temp.counter;
-                    return;
-                }
+                return temp.counter;
             }
 
             for(int i=0; i<4; i++) {
                 int nextX = temp.x + dx[i];
                 int nextY = temp.y + dy[i];
 
-                if (nextX < 0 || nextY < 0 || nextX >= H || nextY >= W)
-                    continue;
-                if (visit[nextX][nextY][temp.k])
-                    continue;
-                if (map[nextX][nextY] == 1)
-                    continue;
-
-                visit[nextX][nextY][temp.k] = true;
-                q.offer(new Node(nextX, nextY, temp.k, temp.counter + 1));
+                if(nextX >= 0 && nextY >= 0 && nextX < H && nextY < W && !visit[nextX][nextY][temp.k] && map[nextX][nextY] == 0) {
+                    visit[nextX][nextY][temp.k] = true;
+                    q.offer(new Node(nextX, nextY, temp.k, temp.counter+1));
+                }
             }
             if(temp.k > 0) {
                 for(int i=0; i<8; i++) {
                     int nextX = temp.x + hdx[i];
                     int nextY = temp.y + hdy[i];
 
-                    if (nextX < 0 || nextY < 0 || nextX >= H || nextY >= W)
-                        continue;
-                    if (visit[nextX][nextY][temp.k])
-                        continue;
-                    if (map[nextX][nextY] == 1)
-                        continue;
-
-                    visit[nextX][nextY][temp.k-1] = true;
-                    q.offer(new Node(nextX, nextY, temp.k-1, temp.counter + 1));
+                    if(nextX >= 0 && nextY >= 0 && nextX < H && nextY < W && !visit[nextX][nextY][temp.k] && map[nextX][nextY] == 0) {
+                        visit[nextX][nextY][temp.k-1] = true;
+                        q.offer(new Node(nextX, nextY, temp.k-1, temp.counter+1));
+                    }
                 }
             }
         }
-        if(count == Integer.MAX_VALUE)
-            count = -1;
+        return count;
     }
 
     public static void main(String[] args) throws IOException {
@@ -102,7 +82,11 @@ public class AL_1600 {
             }
         }
 
-        bfs();
-        System.out.println(count);
+        count = bfs(0,0);
+
+        if(count == Integer.MAX_VALUE)
+            System.out.println(-1);
+        else
+            System.out.println(count);
     }
 }
